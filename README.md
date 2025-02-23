@@ -1,1 +1,1 @@
-# openmetadata-helm-argocd
+# OpenMetadata Helm ArgoCD
