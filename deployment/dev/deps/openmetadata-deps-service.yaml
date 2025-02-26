@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: omd
+  namespace: omd
+  labels:
+    app: omd
+spec:
+  selector:
+    app: omd
+  type: LoadBalancer
+  ports:
+    - name: port-5432
+      protocol: TCP
+      port: 5432
+      targetPort: 5432
+    - name: port-9300
+      protocol: TCP
+      port: 9300
+      targetPort: 9300
+    - name: port-9200
+      protocol: TCP
+      port: 9200
+      targetPort: 9200
+    - name: port-9000
+      protocol: TCP
+      port: 9000
+      targetPort: 9000
+    - name: port-9001
+      protocol: TCP
+      port: 9001
+      targetPort: 9001

@@ -1,0 +1,15 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: vol-omd-minio
+  namespace: omd
+spec:
+  selector:
+    matchLabels:
+      type: minio
+  storageClassName: local-storage
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 3Gi

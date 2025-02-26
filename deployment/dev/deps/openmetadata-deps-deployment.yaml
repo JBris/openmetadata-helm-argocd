@@ -1,0 +1,97 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: omd
+  namespace: omd
+  labels:
+    app: omd
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: omd
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: omd
+    spec:
+      containers:
+        - image: postgres:15.3-bullseye
+          imagePullPolicy: Always
+          name: postgres
+          env:
+            - name: POSTGRES_USER
+              value: user
+            - name: POSTGRES_PASSWORD
+              value: password
+            - name: POSTGRES_DB
+              value: omd
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: vol-omd-postgres
+        - image: elasticsearch:7.10.1
+          imagePullPolicy: Always
+          name: elasticsearch 
+          env:
+            - name: discovery.type
+              value: single-node
+            - name: ES_JAVA_OPTS
+              value: -Xms3g -Xmx3g
+            - name: xpack.security.enabled
+              value: "false"
+            - name: TZ
+              value: Pacific/Auckland
+          ports:
+            - containerPort: 9200 
+            - containerPort: 9300 
+          # volumeMounts:
+          #   - mountPath: /usr/share/elasticsearch/data
+          #     name: vol-omd-elasticsearch
+        - image: minio/minio:RELEASE.2023-05-27T05-56-19Z
+          imagePullPolicy: Always
+          name: minio
+          workingDir: /data
+          args:
+            - server
+            - --console-address
+            - :9001
+            - --address
+            - :9000
+            - /data
+          env:
+            - name: MINIO_ACCESS_KEY
+              value: user
+            - name: MINIO_SECRET_KEY
+              value: password
+            - name: MINIO_ROOT_USER
+              value: user
+            - name: MINIO_ROOT_PASSWORD
+              value: password
+            - name: MINIO_STORAGE_USE_HTTPS
+              value: "False"
+            - name: MINIO_PROMETHEUS_AUTH_TYPE
+              value: public
+          ports:
+            - containerPort: 9001
+            - containerPort: 9000
+          volumeMounts:
+            - mountPath: /data
+              name: vol-omd-minio
+      restartPolicy: Always
+      volumes:
+        - name: vol-omd-postgres
+          persistentVolumeClaim:
+            claimName: vol-omd-postgres
+        - name: vol-omd-elasticsearch
+          persistentVolumeClaim:
+            claimName: vol-omd-elasticsearch
+        - name: vol-omd-minio
+          persistentVolumeClaim:
+            claimName: vol-omd-minio
+      #   - name: initdb
+      #     configMap:
+      #       name: postgres-initdb

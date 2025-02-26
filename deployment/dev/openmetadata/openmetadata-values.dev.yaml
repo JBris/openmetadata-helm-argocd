@@ -1,0 +1,25 @@
+openmetadata:
+  config:
+    database:
+      enabled: true
+      host: omd
+      port: 5432
+      driverClass: org.postgresql.Driver
+      dbScheme: postgresql
+      databaseName: omd
+      auth:
+        username: admin
+        password: password
+    elasticsearch:
+      host: omd
+      searchType: elasticsearch 
+      port: 9200
+      scheme: http
+      connectionTimeoutSecs: 5
+      socketTimeoutSecs: 60
+      keepAliveTimeoutSecs: 600
+      batchSize: 10
+      auth:
+        enabled: false
+        username: user
+        password: password

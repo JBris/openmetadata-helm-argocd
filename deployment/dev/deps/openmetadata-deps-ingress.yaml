@@ -1,0 +1,56 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: omd
+  namespace: omd
+  annotations:
+    cert-manager.io/issuer: letsencrypt-staging
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: minio.omd.me
+    http:
+      paths:
+      - backend:
+          service:
+            name: omd
+            port:
+              name: port-9000
+        path: /
+        pathType: Prefix
+  - host: minio-api.omd.me
+    http:
+      paths:
+      - backend:
+          service:
+            name: omd
+            port:
+              name: port-9001
+        path: /
+        pathType: Prefix
+  - host: minio-api.omd.me
+    http:
+      paths:
+      - backend:
+          service:
+            name: omd
+            port:
+              name: port-9001
+        path: /
+        pathType: Prefix
+  - host: elasticsearch.omd.me
+    http:
+      paths:
+      - backend:
+          service:
+            name: omd
+            port:
+              name: port-9200
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - 'minio.omd.me'
+    - 'minio-api.omd.me'
+    - 'elasticsearch.omd.me'
+    secretName: omd-tls-secret

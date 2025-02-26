@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-initdb
+  namespace: omd
+data:
+  init-user-db.sh: |
+    #!/bin/bash
+    set -e
+
+    # Create the required databases
+    psql --username "$POSTGRES_USER" <<-EOSQL
+      CREATE DATABASE airflow_etl;
+      CREATE DATABASE airflow_etl_metadata;
+      CREATE DATABASE omd;
+    EOSQL

@@ -1,0 +1,17 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: openmetadata-dependencies-dags
+  namespace: omd
+  labels:
+    app: airflow
+spec:
+  selector:
+    matchLabels:
+      type: dags
+  accessModes:
+    - ReadWriteMany
+  storageClassName: local-storage
+  resources:
+    requests:
+      storage: 3Gi

@@ -1,0 +1,33 @@
+mysql:
+  enabled: false
+
+postgresql:
+  enabled: false
+
+opensearch:
+  enabled: false
+  
+airflow:
+  airflow:
+    extraVolumeMounts:
+      - mountPath: /airflow-logs
+        name: nfs-airflow-logs
+      - mountPath: /airflow-dags/dags
+        name: nfs-airflow-dags
+    extraVolumes:
+      - name: nfs-airflow-logs
+        persistentVolumeClaim:
+          claimName: openmetadata-dependencies-logs
+      - name: nfs-airflow-dags
+        persistentVolumeClaim:
+          claimName: openmetadata-dependencies-dags
+    config:
+      AIRFLOW__OPENMETADATA_AIRFLOW_APIS__DAG_GENERATED_CONFIGS: "/airflow-dags/dags"
+  dags:
+    path: /airflow-dags/dags
+    persistence:
+      enabled: false
+  logs:
+    path: /airflow-logs
+    persistence:
+      enabled: false

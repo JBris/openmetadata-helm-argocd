@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: my-permission-pod
+  name: my-permission-pod
+  namespace: omd
+spec:
+  containers:
+  - image: busybox
+    name: my-permission-pod
+    volumeMounts:
+    - name: airflow-dags
+      mountPath: /airflow-dags
+    - name: airflow-logs
+      mountPath: /airflow-logs
+    command:
+    - "chown -R 50000 /airflow-dags /airflow-logs"
+    - "chmod -R a+rwx /airflow-dags"
+  volumes:
+  - name: airflow-logs
+    persistentVolumeClaim:
+      claimName: openmetadata-dependencies-logs
+  - name: airflow-dags
+    persistentVolumeClaim:
+      claimName: openmetadata-dependencies-dags
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
